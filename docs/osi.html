@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Bob Chats with Sonny - OSI Layer Flow</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #121212;
+    color: #eee;
+    margin: 0;
+    overflow-x: hidden;
+  }
+
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px;
+    height: 100vh;
+  }
+
+  .person {
+    width: 120px;
+    text-align: center;
+  }
+
+  .person h2 {
+    margin-bottom: 10px;
+  }
+
+  .chat-bubble {
+    background: #3b82f6;
+    padding: 12px 18px;
+    border-radius: 25px;
+    display: inline-block;
+    position: relative;
+    color: #fff;
+    font-weight: bold;
+    min-width: 140px;
+  }
+
+  .osi-layers {
+    position: relative;
+    flex-grow: 1;
+    margin: 0 30px;
+    height: 50px;
+    overflow: visible;
+  }
+
+  .layer-box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #1e40af;
+    padding: 10px 15px;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .message {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    background: #22c55e;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="person" id="bob">
+      <h2>Bob</h2>
+      <div class="chat-bubble">Hi Sonny!</div>
+    </div>
+
+    <div class="osi-layers" id="osiContainer">
+      <!-- Layer boxes and message will be created dynamically -->
+    </div>
+
+    <div class="person" id="sonny">
+      <h2>Sonny</h2>
+      <div class="chat-bubble" style="visibility:hidden;">Hi Bob!</div>
+    </div>
+  </div>
+
+<script>
+  const osiLayers = [
+    "Application Layer",
+    "Presentation Layer",
+    "Session Layer",
+    "Transport Layer",
+    "Network Layer",
+    "Data Link Layer",
+    "Physical Layer"
+  ];
+
+  const osiContainer = document.getElementById("osiContainer");
+
+  // Create divs for each layer and position them spaced out horizontally
+  osiLayers.forEach((layer, index) => {
+    const layerDiv = document.createElement("div");
+    layerDiv.classList.add("layer-box");
+    layerDiv.style.left = `${(index / (osiLayers.length - 1)) * 100}%`;
+    layerDiv.style.transform = "translateX(-50%)";
+    layerDiv.textContent = layer;
+    osiContainer.appendChild(layerDiv);
+  });
+
+  // Create the moving message bubble
+  const message = document.createElement("div");
+  message.classList.add("message");
+  message.textContent = "Hi Sonny!";
+  osiContainer.appendChild(message);
+
+  const layerBoxes = osiContainer.querySelectorAll(".layer-box");
+  let currentIndex = 0;
+
+  function animateFlow() {
+    if (currentIndex > 0) {
+      // Hide the previous layer label
+      layerBoxes[currentIndex - 1].style.opacity = 0.3;
+    }
+    if (currentIndex < layerBoxes.length) {
+      // Highlight current layer
+      layerBoxes[currentIndex].style.opacity = 1;
+      // Move message to current layer position
+      const leftPercent = parseFloat(layerBoxes[currentIndex].style.left);
+      message.style.left = `calc(${leftPercent}% - 50px)`;
+      currentIndex++;
+      setTimeout(animateFlow, 1500);
+    } else {
+      // Message reached Sonny, fade message out and show Sonny's chat bubble
+      message.style.opacity = 0;
+      document.querySelector("#sonny .chat-bubble").style.visibility = "visible";
+    }
+  }
+
+  // Start animation after a delay so Bob's bubble is visible first
+  setTimeout(animateFlow, 2000);
+</script>
+</body>
+</html>
