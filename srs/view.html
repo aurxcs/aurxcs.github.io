@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Feature List</title>
+</head>
+<body>
+  <h1>Features</h1>
+  <ul id="feature-list"></ul>
+
+  <script>
+    // URL to your CSV file
+    const csvUrl = 'https://hello.github.io/srs/data/feature_list.csv';
+
+    fetch(csvUrl)
+      .then(response => response.text())
+      .then(text => {
+        const lines = text.trim().split('\n');
+        const features = lines.slice(1); // Skip the header line "feature"
+        const listElement = document.getElementById('feature-list');
+        features.forEach(feature => {
+          const li = document.createElement('li');
+          li.textContent = feature;
+          listElement.appendChild(li);
+        });
+      })
+      .catch(error => {
+        console.error('Error loading CSV:', error);
+      });
+  </script>
+</body>
+</html>
